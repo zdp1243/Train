@@ -7,7 +7,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/Train2.html"
+        "destination": "/index2.html"
       }
     ]
   }

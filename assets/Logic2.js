@@ -1,6 +1,3 @@
-/* global firebase moment */
-// Steps to complete:
-
 // 1. Initialize Firebase
 // 2. Create button for adding new employees - then update the html + update the database
 // 3. Create a way to retrieve trains from the train database.
@@ -9,11 +6,14 @@
 // 6. Then use moment.js formatting to use military time.
 
 // 1. Initialize Firebase
+
 var config = {
-  apiKey: "AIzaSyA_QypGPkcjPtylRDscf7-HQl8ribnFeIs",
-  authDomain: "time-sheet-55009.firebaseapp.com",
-  databaseURL: "https://time-sheet-55009.firebaseio.com",
-  storageBucket: "time-sheet-55009.appspot.com"
+  apiKey: "AIzaSyCeROnppT-J6RYvZjl54etRUt1s0PZ8EAA",
+  authDomain: "test-8ac41.firebaseapp.com",
+  databaseURL: "https://test-8ac41.firebaseio.com",
+  projectId: "test-8ac41",
+  storageBucket: "test-8ac41.appspot.com",
+  messagingSenderId: "928044789496"
 };
 
 firebase.initializeApp(config);
@@ -92,7 +92,7 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var trainNext = moment().diff(moment.unix(trainInit, "X"), "frequency");
   console.log(trainNext);
 
-  // Calculate Mintes Away (should be next arrival time minus current time NOT SURE WRITTEN RIGHT)
+  // Calculate Minutes Away (should be next arrival time minus current time NOT SURE moment WRITTEN RIGHT)
   var minAway = trainNext - moment;
   console.log(minAway);
 
