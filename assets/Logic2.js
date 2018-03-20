@@ -3,25 +3,24 @@
 // 3. Create a way to retrieve trains from the train database.
 // 4. Create a way to calculate next arrival using difference between current time and frequency.
 // 5. Create a way to calculate minutes away. Using difference between next arrival and current time.
-// 6. Then use moment.js formatting to use military time.
+// 6. Then use moment.js formatting to use military time and convert military time to regular time in table.
 
 // 1. Initialize Firebase
 
 var config = {
-  apiKey: "AIzaSyCeROnppT-J6RYvZjl54etRUt1s0PZ8EAA",
-  authDomain: "test-8ac41.firebaseapp.com",
-  databaseURL: "https://test-8ac41.firebaseio.com",
-  projectId: "test-8ac41",
-  storageBucket: "test-8ac41.appspot.com",
-  messagingSenderId: "928044789496"
+  apiKey: "AIzaSyDhiGsGexqn6ivUb3Lxc5M7ZW5Agj6d2SY",
+  authDomain: "train-times-5a2c4.firebaseapp.com",
+  databaseURL: "https://train-times-5a2c4.firebaseio.com",
+  projectId: "train-times-5a2c4",
+  storageBucket: "",
+  messagingSenderId: "662661765353"
 };
-
 firebase.initializeApp(config);
 
 var database = firebase.database();
 
 // 2. Button for adding Trains
-$("#add-employee-btn").on("click", function(event) {
+$("#add-train-btn").on("click", function(event) {
   event.preventDefault();
 
   // Grabs user input
@@ -31,12 +30,9 @@ $("#add-employee-btn").on("click", function(event) {
   var trainDest = $("#destination-input")
     .val()
     .trim();
-  var trainInit = moment(
-    $("#firstTime-input")
-      .val()
-      .trim(),
-    "HH:mm"
-  ).format("X");
+  var trainInit = $("#firstTime-input")
+    .val()
+    .trim();
   var trainFreq = $("#frequency-input")
     .val()
     .trim();
@@ -51,12 +47,6 @@ $("#add-employee-btn").on("click", function(event) {
 
   // Uploads employee data to the database
   database.ref().push(newTrain);
-
-  // Console Logs
-  console.log(newTrain.name);
-  console.log(newTrain.destination);
-  console.log(newTrain.firstTime);
-  console.log(newTrain.frequency);
 
   // Alert
   alert("Train successfully added");
@@ -74,9 +64,9 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
   // Store everything into a variable.
   var trainName = childSnapshot.val().name;
-  var trainDest = childSnapshot.val().role;
-  var trainInit = childSnapshot.val().start;
-  var trainFreq = childSnapshot.val().rate;
+  var trainDest = childSnapshot.val().destination;
+  var trainInit = childSnapshot.val().firstTime;
+  var trainFreq = childSnapshot.val().frequency;
 
   // Train Console Logs
   console.log(trainName);
@@ -84,18 +74,23 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   console.log(trainInit);
   console.log(trainFreq);
 
-  // Prettify the employee start
-  var trainInitPretty = moment.unix(trainInit).format("HH:mm");
-
+  // Prettify time of first train
+  var trainInitPretty = moment(trainInit).format("HH:mm");
+  console.log(trainInitPretty);
   // Calculate the Next Arrival
-  // To calculate next arrival(should be last arrival plus frequency MATH NOT RIGHT)
-  var trainNext = moment().diff(moment.unix(trainInit, "X"), "frequency");
+  // To calculate next arrival(should be last arrival plus frequency)
+  var trainNext = moment().diff(moment(trainInitPretty).format("H:mmA"));
   console.log(trainNext);
 
-  // Calculate Minutes Away (should be next arrival time minus current time NOT SURE moment WRITTEN RIGHT)
-  var minAway = trainNext - moment;
+  var remainder = trainNext % trainFreq;
+  console.log(remainder);
+  // Calculate Minutes Away (should be next arrival time minus current time)
+  var minAway = trainFreq - remainder;
   console.log(minAway);
 
+  var nextTrain = moment().add(moment(minAway), "mm");
+  //var nextTrain = 7;
+  console.log(nextTrain);
   // Add each train's data into the table
   $("#train-table > tbody").append(
     "<tr><td>" +
@@ -103,9 +98,10 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
       "</td><td>" +
       trainDest +
       "</td><td>" +
-      trainNext +
+      trainFreq +
       "</td><td>" +
-      +"</td><td>" +
+      nextTrain +
+      "</td><td>" +
       minAway +
       "</td></tr>"
   );
