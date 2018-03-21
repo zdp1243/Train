@@ -74,12 +74,21 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   console.log(trainInit);
   console.log(trainFreq);
 
-  // Prettify time of first train
-  var trainInitPretty = moment(trainInit).format("HH:mm");
+  // Prettify time of first train  Get Initial train time Get current time run modulo on current time v initial time=time past last train
+  //then take frequency - time past last train gives minutes until next train
+
+  var trainInitPretty = moment()
+    .utc(trainInit)
+    .format("HH:mm");
   console.log(trainInitPretty);
   // Calculate the Next Arrival
   // To calculate next arrival(should be last arrival plus frequency)
-  var trainNext = moment().diff(moment(trainInitPretty).format("H:mmA"));
+
+  var trainNext = moment()
+    .utc(trainInit)
+    .diff(moment(trainInit), "minutes")
+    .format("HH:mm");
+
   console.log(trainNext);
 
   var remainder = trainNext % trainFreq;
@@ -88,7 +97,9 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var minAway = trainFreq - remainder;
   console.log(minAway);
 
-  var nextTrain = moment().add(moment(minAway), "mm");
+  var nextTrain = moment()
+    .utc()
+    .add(moment(minAway), "mm");
   //var nextTrain = 7;
   console.log(nextTrain);
   // Add each train's data into the table
