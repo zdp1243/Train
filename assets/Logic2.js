@@ -123,3 +123,5 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
       "</td></tr>"
   );
 });
+
+//Trent helped me to figure out the Moment issues I had run across.  Much thanks!
